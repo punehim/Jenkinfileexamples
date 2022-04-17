@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build Application') {
+            steps {
+                sh 'mvn -f java-tomcat-sample/pom.xml clean package'
+            }
+            post {
+                success {
+                    echo "Now Archiving the Artifacts...."
+                    archiveArtifacts artifacts: '**/*.war'
+                }
+            }
+        }
+
+        stage('Deploy in Staging Environment'){
+            steps{
+                build job: 'Deploy_Application_Staging_Environment_JOB2'
+
+            }
+            
+        }
+
+        stage('Deploy to Production'){
+            steps{
+                timeout(time:5, unit:'DAYS'){
+                    input message:'Approve PRODUCTION Deployment?'
+                }
+                build job: 'Deploy_Application_Deploy_Environment_JOB3'
+            }
+        }
+        
+        
+    }
+}
+
+
+sshagent(['Deploy-on-Tomcat']) {
+    // some block
+}
+
+
+stage("Deploy-Tomcat") {
+    bat "copy target\\**/*.war \"${tomcatweb}\\**/*.war\""
+}
+    stage ('start tomcat server')
+        sleep(time:5,unit:"SECONDS")
+        bat "${tomcatBin}\\startup.bat"
+        sleep(time:100,unit:"SECONDS")
+        }
+        }

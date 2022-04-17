@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("SCM Check IN") {
+            steps {
+                git 'https://github.com/punehim/Jenkins_Upgradev3.git'
+            }
+        }
+        stage("pom chickin") {
+            steps {
+                 bat 'mvn -f java-tomcat-sample/pom.xml clean install'
+            }
+        }
+        stage("TEST") {
+            steps {
+                bat 'mvn -f java-tomcat-sample/pom.xml test'
+            }
+        }
+    }
+}

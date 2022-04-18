@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+    stages {
+        stage("SCM Check IN") {
+            steps {
+                echo "Now Archiving the Artifacts...."
+                git 'https://github.com/punehim/Jenkins_Upgradev3.git'
+            }
+        }
+        stage("Build-The Application") {
+            steps {
+                echo "Building the Application...."
+                bat 'mvn -f java-tomcat-sample/pom.xml clean install'
+            }
+        }
+        stage("Archive The Arifacts") {
+            steps {
+                echo "Now Archiving the Artifacts...."
+                archiveArtifacts artifacts: '**/*.war', followSymlinks: false
+            }
+        }
+        stage('Deploy in Staging Environment'){
+            steps{
+                build job: 'tomcatDeployer-Job2'
+
+            }
+            
+        }
+        
+    }
+}
+
+
+

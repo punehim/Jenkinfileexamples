@@ -7,14 +7,19 @@ pipeline {
                 git 'https://github.com/punehim/Jenkins_Upgradev3.git'
             }
         }
-        stage("pom chickin") {
+        stage("Install") {
             steps {
                  bat 'mvn -f java-tomcat-sample/pom.xml clean install'
             }
         }
-        stage("TEST") {
+        stage("Package") {
             steps {
-                bat 'mvn -f java-tomcat-sample/pom.xml test'
+                bat 'mvn -f java-tomcat-sample/pom.xml package'
+            }
+        }
+        stage("Artifacts Archiving") {
+            steps {
+                archiveArtifacts artifacts: '**/*.war', followSymlinks: false
             }
         }
     }
